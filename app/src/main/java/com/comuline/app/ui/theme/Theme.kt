@@ -24,8 +24,8 @@ private val LightColorPalette = lightColorScheme(
 @Composable
 fun JetpackComposeBoilerplateTheme(
     // TODO: theming
-//    darkTheme: Boolean = isSystemInDarkTheme(),
-    darkTheme: Boolean = false,
+    darkTheme: Boolean = isSystemInDarkTheme(),
+//    darkTheme: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) {

@@ -101,7 +101,7 @@ fun DestinationItem(
                         val maxVisibleSchedules = MAX_VISIBLE_SCHEDULES
 
                         // Split the schedules into visible and hidden parts
-                        val visibleSchedules = schedules.take(maxVisibleSchedules)
+                        val visibleSchedules = schedules.drop(1).take(maxVisibleSchedules)
 
                         visibleSchedules.mapIndexed { index, schedule ->
                             if (index < maxVisibleSchedules) { // Show schedules up to the maxVisibleSchedules
@@ -118,7 +118,6 @@ fun DestinationItem(
                     val maxVisibleSchedules = MAX_VISIBLE_SCHEDULES
 
                     // Split the schedules into visible and hidden parts
-                    val visibleSchedules = schedules.take(maxVisibleSchedules)
                     val hiddenSchedules = schedules.drop(maxVisibleSchedules)
 
                     // Add "View More" or "View Less" button if there are hidden schedules
@@ -127,7 +126,7 @@ fun DestinationItem(
                             onClick = { showAll = !showAll }, // Toggle the showAll state
                             modifier = Modifier.padding(top = 8.dp)
                         ) {
-                            Text(if (showAll) "View Less" else "View More")
+                            Text(if (showAll) stringResource(R.string.view_less) else stringResource(R.string.view_more))
                         }
                     }
 

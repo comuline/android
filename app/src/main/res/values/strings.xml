@@ -12,4 +12,7 @@
     <string name="no_schedules_available">Jadwal kereta api tidak tersedia. Cek lagi pada esok hari.</string>
 
     <string name="no_saved_station_message">Tidak ada stasiun yang tersimpan, harap tekan tombol tambah pada kanan atas layar</string>
+
+    <string name="view_less">Lihat sedikit</string>
+    <string name="view_more">Lihat semua</string>
 </resources>

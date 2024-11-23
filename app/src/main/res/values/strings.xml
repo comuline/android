@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Comuline</string>
+    <string name="please_check_network_connection">Harap cek koneksi internet Anda</string>
+    <string name="station">Stasiun</string>
+    <string name="destination">Arah menuju</string>
+    <string name="departure_time">Berangkat pukul</string>
+    <string name="departure_in">dalam</string>
+    <string name="next_departure">Jam berikutnya</string>
+
+    <string name="saved_station_message">Stasiun %1$s telah ditambahkan</string>
+
+    <string name="no_schedules_available">Jadwal kereta api tidak tersedia. Cek lagi pada esok hari.</string>
+
+    <string name="no_saved_station_message">Tidak ada stasiun yang tersimpan, harap tekan tombol tambah pada kanan atas layar</string>
+</resources>

@@ -7,16 +7,24 @@ import com.comuline.app.database.StationEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface SchedulesDao {
-
-    @Query("select * from StationEntity")
+interface ComulineDao {
+    @Query("select * from stations")
     fun getStations(): Flow<List<StationEntity>?>
+
+    @Query("select * from stations where id = :id")
+    fun getStation(id: String): StationEntity?
+
+    @Query("SELECT * FROM stations WHERE id = :id LIMIT 1")
+    fun getStationFlow(id: String): Flow<StationEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertStations(station: List<StationEntity>)
 
     @Query("select * from SavedStationEntity")
     fun getWatchedStations(): Flow<List<SavedStationEntity>?>
+
+    @Query("SELECT * FROM SavedStationEntity")
+    suspend fun getWatchedStationsOnce(): List<SavedStationEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertWatchedStation(station: SavedStationEntity)
@@ -27,18 +35,22 @@ interface SchedulesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSchedules(schedules: List<ScheduleEntity>)
 
-    @Query("SELECT * FROM ScheduleEntity WHERE stationId = :stationId")
+    @Query("SELECT * FROM schedules WHERE station_id = :stationId")
     suspend fun getSchedulesByStationId(stationId: String): List<ScheduleEntity>
 
-    @Query("SELECT * FROM ScheduleEntity")
+    @Query("SELECT * FROM schedules")
     fun getAllSchedules(): Flow<List<ScheduleEntity>?>
 
-    @Query("SELECT * FROM ScheduleEntity WHERE id = :id")
+    @Query("SELECT * FROM schedules WHERE id = :id")
     suspend fun getScheduleById(id: String): ScheduleEntity?
 
-    @Query("DELETE FROM ScheduleEntity WHERE id = :id")
+    @Query("DELETE FROM schedules WHERE id = :id")
     suspend fun deleteScheduleById(id: String)
 
-    @Query("DELETE FROM ScheduleEntity")
+    @Query("DELETE FROM schedules")
     suspend fun deleteAllSchedules()
+
+    // Not sure if it's works
+    @Query("DELETE FROM schedules WHERE departs_at < :currentTime")
+    suspend fun deleteSchedulesWithPastDepartureTime(currentTime: String)
 }

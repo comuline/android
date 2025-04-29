@@ -1,66 +1,48 @@
 package com.comuline.app.util
 
-import java.text.SimpleDateFormat
 import android.os.Build
 import androidx.annotation.RequiresApi
+import java.time.Duration
 import java.time.LocalTime
-import java.time.ZoneId
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.util.*
 
-fun formatDate(dateUTC: String?) : String {
-    if (dateUTC.isNullOrEmpty()) return ""
+@RequiresApi(Build.VERSION_CODES.O)
+fun getRelativeTimeString(datetimeStr: String): String {
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nX")
+    val dateTime = OffsetDateTime.parse(datetimeStr, formatter)
 
-    val date = SimpleDateFormat("yyyy-mm-dd'T'HH:mm:ss'Z'", Locale.getDefault()).parse(dateUTC)
-    val newFormat = SimpleDateFormat("dd/MM/yyy", Locale.getDefault())
-    return date?.let { newFormat.format(it) }.orEmpty()
+    val targetTime = dateTime.toLocalTime().truncatedTo(ChronoUnit.MINUTES)
+    val now = LocalTime.now().truncatedTo(ChronoUnit.MINUTES)
+
+    val duration = Duration.between(now, targetTime)
+    val totalMinutes = duration.toMinutes()
+
+    val absMinutes = kotlin.math.abs(totalMinutes)
+    val hours = absMinutes / 60
+    val minutes = absMinutes % 60
+
+    return when {
+        totalMinutes < -1 -> {
+            if (hours > 0) "$hours" + "h " + "${minutes}m ago" else "${minutes}m ago"
+        }
+        totalMinutes in -1..1 -> "now"
+        else -> {
+            if (hours > 0) "in $hours" + "h " + "${minutes}m" else "in ${minutes}m"
+        }
+    }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun getRelativeTimeString(time: String): String {
-    val (h, m) = time.split(":").map { it.toInt() }
-    val date = LocalTime.of(h, m)
-    val now = LocalTime.now(ZoneId.systemDefault())
+fun formatToHourMinute(datetimeStr: String): String {
+    // Define the formatter for the input string
+    val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nX")
 
-    // Calculate seconds difference between the given time and now
-    val deltaSeconds = ChronoUnit.SECONDS.between(now, date)
+    // Parse the input string into OffsetDateTime
+    val dateTime = OffsetDateTime.parse(datetimeStr, inputFormatter)
 
-    // Define cutoffs in seconds
-    val cutoffs = listOf(
-        60,
-        3600,
-        86400,
-        86400 * 7,
-        86400 * 30,
-        86400 * 365,
-        Long.MAX_VALUE
-    )
-
-    // Define units as strings for the output
-    val units = listOf(
-        "second",
-        "minute",
-        "hour",
-        "day",
-        "week",
-        "month",
-        "year"
-    )
-
-    // Find the ideal cutoff unit
-    val unitIndex = cutoffs.indexOfFirst { it > Math.abs(deltaSeconds) }
-
-    // Get divisor for conversion to the right unit
-    val divisor = if (unitIndex > 0) cutoffs[unitIndex - 1] else 1
-
-    if (divisor == 0L) return "sekarang"
-
-    // Get the number of units and format the relative time string
-    val count = deltaSeconds / divisor
-    val formattedTime = if (count == 0L) "sekarang" else "$count ${units[unitIndex]}"
-    return formattedTime
-}
-
-fun removeSeconds(time: String): String {
-    return time.split(":").take(2).joinToString(":")
+    // Format to HH:mm
+    val outputFormatter = DateTimeFormatter.ofPattern("HH:mm")
+    return dateTime.format(outputFormatter)
 }

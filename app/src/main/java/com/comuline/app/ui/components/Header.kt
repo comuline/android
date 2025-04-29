@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
@@ -35,6 +36,8 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.comuline.app.R
 import com.comuline.app.ui.theme.Typography
+
+val ICON_SIZE = 56.dp
 
 @Composable
 fun Header(
@@ -79,39 +82,42 @@ fun Header(
                 if (showBackButton){
                     Icon(
                         modifier = Modifier
-                            .size(72.dp)
+                            .size(ICON_SIZE)
                             .padding(vertical = 16.dp)
+                            .alpha(0.5f)
                             .clickable { onBackButtonTap() }
                         ,
                         painter = painterResource(R.drawable.baseline_arrow_back_ios_new_24),
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = MaterialTheme.colorScheme.onBackground,
                         contentDescription = null,
                     )
                 } else {
-                    AppLogo()
+                    AppLogo(modifier = Modifier.alpha(0.5f))
                 }
                 Spacer(modifier = Modifier.weight(1.0f))
                 if(showSearchIcon){
                     Icon(
                         modifier = Modifier
-                            .size(72.dp)
+                            .size(ICON_SIZE)
                             .padding(vertical = 16.dp)
+                            .alpha(0.5f)
                             .clickable { onSearchToggle() }
                         ,
                         painter = if (expanded) painterResource(R.drawable.baseline_close_24) else painterResource(R.drawable.baseline_search_24),
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = MaterialTheme.colorScheme.onBackground,
                         contentDescription = null,
                     )
                 }
                 if (showAddIcon && !expanded){
                     Icon(
                         modifier = Modifier
-                            .size(72.dp)
+                            .size(ICON_SIZE)
                             .padding(vertical = 16.dp)
+                            .alpha(0.5f)
                             .clickable { onAddButton() }
                         ,
                         painter = painterResource(R.drawable.baseline_add_24),
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = MaterialTheme.colorScheme.onBackground,
                         contentDescription = null,
                     )
                 }

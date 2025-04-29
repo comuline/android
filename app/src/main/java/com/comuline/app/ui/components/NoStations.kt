@@ -33,7 +33,7 @@ fun NoStations() {
                     .size(100.dp)
                     .padding(bottom = 16.dp),
                 painter = painterResource(R.drawable.baseline_close_24),
-                tint = MaterialTheme.colorScheme.primary,
+                tint = MaterialTheme.colorScheme.onBackground,
                 contentDescription = null
             )
             Text(

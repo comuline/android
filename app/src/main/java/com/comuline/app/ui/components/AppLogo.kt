@@ -15,6 +15,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.comuline.app.R
 import com.comuline.app.ui.theme.Typography
 
@@ -22,10 +23,10 @@ import com.comuline.app.ui.theme.Typography
 @Composable
 fun AppLogo(
     modifier: Modifier = Modifier,
-    iconSize: Dp = 72.dp,
+    iconSize: Dp = 48.dp,
     iconPadding: Dp = 16.dp,
-    iconTint: Color = MaterialTheme.colorScheme.primary,
-    textStyle: TextStyle = Typography.titleLarge,
+    iconTint: Color = MaterialTheme.colorScheme.onBackground,
+    textStyle: TextStyle = Typography.titleMedium,
     textColor: Color = MaterialTheme.colorScheme.onBackground,
     contentDescription: String? = null,
 ) {
@@ -44,7 +45,8 @@ fun AppLogo(
         Text(
             text = stringResource(id = R.string.app_name),
             color = textColor,
-            style = textStyle
+            style = textStyle,
+            fontSize = 20.sp
         )
     }
 }

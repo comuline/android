@@ -32,7 +32,7 @@ fun NoNetwork() {
                     .size(100.dp)
                     .padding(bottom = 16.dp),
                 painter = painterResource(R.drawable.ic_offline),
-                tint = MaterialTheme.colorScheme.primary,
+                tint = MaterialTheme.colorScheme.onBackground,
                 contentDescription = null
             )
             Text(

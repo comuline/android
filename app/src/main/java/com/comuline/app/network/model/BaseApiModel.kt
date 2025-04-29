@@ -1,7 +1,21 @@
 package com.comuline.app.network.model
 
-// TODO: API base
-interface BaseApiModel<T> {
-    val status: Int
-    val data: List<T>
-}
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
+
+@JsonClass(generateAdapter = true)
+data class BaseApiModel<T>(
+    @Json(name = "metadata")
+    val metadata: Metadata,
+
+    @Json(name = "data")
+    val data: T
+)
+
+@JsonClass(generateAdapter = true)
+data class Metadata(
+    @Json(name = "success")
+    val success: Boolean?,
+    @Json(name = "message")
+    val message: String?
+)

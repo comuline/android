@@ -99,7 +99,7 @@ fun StationItem(
                     .size(24.dp)
                 ,
                 painter = painterResource(R.drawable.baseline_close_24),
-                tint = MaterialTheme.colorScheme.primary,
+                tint = MaterialTheme.colorScheme.onBackground,
                 contentDescription = null,
             )
         }

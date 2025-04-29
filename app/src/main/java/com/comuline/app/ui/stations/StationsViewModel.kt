@@ -8,8 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.comuline.app.controller.SnackbarController
 import com.comuline.app.controller.SnackbarEvent
 import com.comuline.app.domain.Station
-import com.comuline.app.repository.StationsRepository
-import com.comuline.app.repository.WatchedStationRepository
+import com.comuline.app.repository.StationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -20,8 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StationsViewModel @Inject constructor(
-    private val stationsRepository: StationsRepository,
-    private val watchedStationRepository: WatchedStationRepository
+    private val stationsRepository: StationRepository,
 ) : ViewModel() {
 
     private var searchJob: Job? = null
@@ -33,7 +31,7 @@ class StationsViewModel @Inject constructor(
             stationsRepository.refreshStations()
             withContext(Dispatchers.Main) {
                 launch {
-                    watchedStationRepository.stations.collect { list ->
+                    stationsRepository.savedStations.collect { list ->
                         uiState = list?.let { uiState.copy(savedStation = it) }!!
                     }
                 }
@@ -96,7 +94,7 @@ class StationsViewModel @Inject constructor(
         withContext(Dispatchers.IO) {
             launch {
                 if(uiState.savedStation.any { v -> v.id == station.id }){
-                    watchedStationRepository.removeStation(station.id)
+                    stationsRepository.removeStation(station.id)
                     val savedMessage = "${station.name} Removed"
 
                     SnackbarController.sendEvent(event = SnackbarEvent(
@@ -105,7 +103,7 @@ class StationsViewModel @Inject constructor(
 //                })
                     ))
                 } else {
-                    watchedStationRepository.saveStation(station.id)
+                    stationsRepository.saveStation(station.id)
                     val savedMessage = "${station.name} Saved"
 
                     SnackbarController.sendEvent(event = SnackbarEvent(

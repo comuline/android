@@ -30,25 +30,58 @@ val fontFamilyMono = FontFamily(
 
 val Typography = Typography(
     bodyMedium = TextStyle(
-        fontFamily = fontFamily, fontWeight = FontWeight.Normal, fontSize = 12.sp/*...*/
+        fontFamily = fontFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp/*...*/
     ),
     bodyLarge = TextStyle(
         fontFamily = fontFamily,
         fontWeight = FontWeight.Bold,
         letterSpacing = 2.sp,
-        /*...*/
-    ),
-    headlineMedium = TextStyle(
-        fontFamily = fontFamily, fontWeight = FontWeight.SemiBold/*...*/
+        fontSize = 12.sp
     ),
     bodySmall = TextStyle(
         fontFamily = fontFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp
+        fontSize = 12.sp
+    ),
+
+    headlineMedium = TextStyle(
+        fontFamily = fontFamily,
+        fontWeight = FontWeight.SemiBold
+
+    ),
+
+    titleLarge = TextStyle(
+        fontFamily = fontFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 20.sp,
     ),
     titleMedium = TextStyle(
         fontFamily = fontFamilyMono,
         fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+    ),
+
+    titleSmall = TextStyle(
+        fontFamily = fontFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
+    ),
+
+    labelLarge = TextStyle(
+        fontFamily = fontFamilyMono,
+        fontWeight = FontWeight.Normal,
+        fontSize = 24.sp,
+    ),
+    labelMedium = TextStyle(
+        fontFamily = fontFamilyMono,
+        fontWeight = FontWeight.Normal,
         fontSize = 18.sp,
     ),
+    labelSmall = TextStyle(
+        fontFamily = fontFamilyMono,
+        fontWeight = FontWeight.Bold,
+        fontSize = 12.sp,
+    )
 )

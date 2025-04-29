@@ -24,27 +24,32 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.comuline.app.R
-import com.comuline.app.domain.GROUPED_SCHEDULES_SAMPLES
-import com.comuline.app.domain.GroupedSchedule
 import com.comuline.app.ui.theme.Typography
 import com.composables.icons.lucide.ChevronRight
 import com.composables.icons.lucide.Lucide
+import com.comuline.app.domain.GroupedSchedule
+import com.comuline.app.domain.Station
+import kotlinx.coroutines.flow.Flow
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun ScheduleItem(
     stationName: String = "Bekasi",
-    groupedSchedule: GroupedSchedule = GROUPED_SCHEDULES_SAMPLES,
-    isLoading: Boolean = false)
+    groupedSchedule: GroupedSchedule,
+    isLoading: Boolean = false,
+    getStationById: (String) -> Flow<Station?>,
+    defaultOpen: Boolean = false
+)
 {
-    var expanded by remember { mutableStateOf(true) }
+    var expanded by remember { mutableStateOf(defaultOpen) }
     val degrees by animateFloatAsState(if (expanded) -90f else 90f)
 
     Box(
@@ -60,7 +65,9 @@ fun ScheduleItem(
                 modifier = Modifier.clickable { if(!isLoading) expanded = !expanded },
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Column {
+                Column (
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
                     Text(
                         text = stringResource(id = R.string.station),
                         color = MaterialTheme.colorScheme.onBackground,
@@ -77,7 +84,7 @@ fun ScheduleItem(
                 Spacer(modifier = Modifier.weight(1.0f))
                 if(isLoading){
                     CircularProgressIndicator(
-                        modifier = Modifier.width(32.dp),
+                        modifier = Modifier.width(32.dp).alpha(0.5f).size(20.dp),
                         color = MaterialTheme.colorScheme.secondary,
                         trackColor = MaterialTheme.colorScheme.surfaceVariant,
                     )
@@ -85,7 +92,7 @@ fun ScheduleItem(
                     Image(
                         Lucide.ChevronRight,
                         contentDescription = null,
-                        modifier = Modifier.rotate(degrees),
+                        modifier = Modifier.rotate(degrees).alpha(0.5f).size(20.dp),
                     )
                 }
             }
@@ -102,24 +109,29 @@ fun ScheduleItem(
                 Column (
                     Modifier
                         .fillMaxWidth()
-                        .padding(PaddingValues(top = 12.dp))) {
+                        .padding(PaddingValues(top = 12.dp, bottom = 4.dp))) {
                     groupedSchedule.map { destination ->
                         destination.value.map { schedule ->
-                            DestinationItem(
-                                colorStr = destination.key.split("-")[1],
-                                stationName = schedule.key,
-                                schedules = schedule.value
-                            )
+                            schedule.value.firstOrNull()?.trainId?.let {
+                                DestinationItem(
+                                    colorStr = destination.key.split("-")[1],
+                                    stationName = schedule.key,
+                                    trainId = it,
+                                    schedules = schedule.value,
+                                    stationFlow = getStationById(schedule.key)
+                                )
+                            }
                         }
                     }
                 }
             }
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
             Box(
                 Modifier
                     .fillMaxWidth()
                     .height(1.dp)
-                    .background(MaterialTheme.colorScheme.tertiary))
+                    .alpha(0.1f)
+                    .background(MaterialTheme.colorScheme.onBackground))
         }
     }
 }

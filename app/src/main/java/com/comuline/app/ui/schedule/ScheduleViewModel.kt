@@ -6,58 +6,60 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.comuline.app.database.SavedStationEntity
+import com.comuline.app.domain.Station
 import com.comuline.app.repository.ScheduleRepository
-import com.comuline.app.repository.WatchedStationRepository
+import com.comuline.app.repository.StationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class ScheduleViewModel @Inject constructor(
     private val scheduleRepository: ScheduleRepository,
-    private val watchedStationRepository: WatchedStationRepository
+    private val stationsRepository: StationRepository,
 ) : ViewModel() {
 
     var uiState by mutableStateOf(ScheduleUiState())
         private set
 
-    init {
-//        viewModelScope.launch(Dispatchers.IO) {
-//            withContext(Dispatchers.Main) {
-//                launch {
-//                    watchedStationRepository.stations.collect { list ->
-//                        uiState = list?.let { uiState.copy(savedStation = it) }!!
-//                    }
-//                }
-//                launch {
-//                    watchedStationRepository.stations.collect { list ->
-//                        uiState = if (list.isNullOrEmpty()) {
-//                            uiState.copy(offline = true)
-//                        } else {
-//                            uiState.copy(
-//                                savedStation = list,
-//                                offline = false
-//                            )
-//                        }
-//                    }
-//                }
-//            }
-//        }
+    private var pollingJob: Job? = null
 
-        viewModelScope.launch(Dispatchers.IO) {
-            watchedStationRepository.stations.collect { list ->
-                withContext(Dispatchers.Main) {
-                    if (list.isNullOrEmpty()) {
-//                        uiState = uiState.copy(offline = true)
-                    } else {
-                        uiState = uiState.copy(savedStation = list, offline = false)
-                        fetchSchedulesForStations(list)
-                        observeSchedules()
-                    }
+    init {
+        fetchOnStart()
+        observeSchedules()
+    }
+
+    private fun fetchOnStart() {
+        viewModelScope.launch {
+            try {
+                val savedStations = stationsRepository.getSavedStationsOnce()
+                if (savedStations.isNullOrEmpty()) {
+                    uiState = uiState.copy(offline = true)
+                } else {
+                    uiState = uiState.copy(savedStation = savedStations, offline = false)
+                    refreshSchedules() // Changed from fetchSchedulesForStations
                 }
+            } catch (e: Exception) {
+                Timber.e("Error fetching saved stations: $e")
+                uiState = uiState.copy(offline = true)
+            }
+        }
+    }
+
+    fun refreshSchedules() {
+        viewModelScope.launch {
+            try {
+                val stations = stationsRepository.getSavedStationsOnce()
+                if (!stations.isNullOrEmpty()) {
+                    uiState = uiState.copy(savedStation = stations)
+                    fetchSchedulesForStations(stations)
+                }
+            } catch (e: Exception) {
+                Timber.e("Error refreshing schedules: $e")
             }
         }
     }
@@ -72,94 +74,42 @@ class ScheduleViewModel @Inject constructor(
         }
     }
 
+    fun getStationById(id: String): Flow<Station?> {
+        return stationsRepository.getStationFlow(id)
+    }
+
     private fun observeSchedules() {
         viewModelScope.launch {
             scheduleRepository.schedules.collect { schedules ->
+                Timber.d("Collected ${schedules?.size ?: 0} schedules")
                 schedules?.let {
                     uiState = uiState.copy(schedules = it)
-//                    // Group schedules by stationId or other criteria
-//                    val grouped = it.groupBy { schedule -> schedule.stationId }
-//
-//                    grouped.map { schedules ->
-//                        val groupedSchedule = groupSchedules(schedules.value)
-//                        uiState = uiState.copy(schedules = groupedSchedule)
-//                    }
-//
-//                    val groupedSchedule = groupSchedules(it)
-//                    uiState = uiState.copy(schedules = groupedSchedule)
                 }
             }
         }
     }
+
+    fun startPolling(intervalMillis: Long = 30_000L) {
+        if (pollingJob?.isActive == true) return
+
+        pollingJob = viewModelScope.launch {
+            while (true) {
+                try {
+                    Timber.d("Polling schedules...")
+                    val stations = stationsRepository.getSavedStationsOnce()
+                    if (!stations.isNullOrEmpty()) {
+                        fetchSchedulesForStations(stations)
+                    }
+                } catch (e: Exception) {
+                    Timber.e("Polling error: $e")
+                }
+                delay(intervalMillis)
+            }
+        }
+    }
+
+    fun stopPolling() {
+        pollingJob?.cancel()
+        pollingJob = null
+    }
 }
-
-//                launch {
-//                    uiState.savedStation.map {
-//                        scheduleRepository.getScheduleByStationId(it.id)
-//                    }
-//                }
-
-//    private suspend fun filterWithQuery(query: String) {
-//        stationsRepository.stations.collect { list ->
-//            withContext(Dispatchers.Main) {
-//                uiState = if (list.isNullOrEmpty()) {
-//                    uiState.copy(offline = true)
-//                } else {
-//                    if(query.isNotEmpty()){
-//                        val filteredList = ArrayList<Station>()
-//                        for(station in list){
-//                            if(station.name.contains(query, ignoreCase = true)){
-//                                filteredList.add(station)
-//                            }
-//                        }
-//                        uiState.copy(
-//                            list = filteredList,
-//                        )
-//                    } else {
-//                        uiState.copy(
-//                            list = list,
-//                        )
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    fun searchStation(search : String) {
-//        searchJob = viewModelScope.launch {
-//            delay(500)
-//            filterWithQuery(search)
-//        }
-//    }
-//
-//    fun resetSearch() {
-//        viewModelScope.launch {
-//            filterWithQuery("")
-//        }
-//    }
-//
-//    suspend fun saveStation(station: Station) {
-//        withContext(Dispatchers.IO) {
-//            launch {
-//                if(uiState.savedStation.any { v -> v.id == station.id }){
-//                    watchedStationRepository.removeStation(station.id)
-//                    val savedMessage = "${station.name} Removed"
-//
-//                    SnackbarController.sendEvent(event = SnackbarEvent(
-//                        message = savedMessage,
-////                action = SnackbarAction(name = "Undo", action = {
-////                })
-//                    ))
-//                } else {
-//                    watchedStationRepository.saveStation(station.id)
-//                    val savedMessage = "${station.name} Saved"
-//
-//                    SnackbarController.sendEvent(event = SnackbarEvent(
-//                        message = savedMessage,
-////                action = SnackbarAction(name = "Undo", action = {
-////                })
-//                    ))
-//                }
-//            }
-//        }
-//    }

@@ -1,8 +1,7 @@
 package com.comuline.app.di
 
 import com.comuline.app.BuildConfig
-import com.comuline.app.network.ScheduleApi
-import com.comuline.app.network.StationsApi
+import com.comuline.app.network.ComulineApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,12 +40,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideStationsService(retrofit: Retrofit): StationsApi =
-        retrofit.create(StationsApi::class.java)
-
-    @Provides
-    @Singleton
-    fun provideScheduleService(retrofit: Retrofit): ScheduleApi =
-        retrofit.create(ScheduleApi::class.java)
+    fun provideComulineApi(retrofit: Retrofit): ComulineApi =
+        retrofit.create(ComulineApi::class.java)
 
 }

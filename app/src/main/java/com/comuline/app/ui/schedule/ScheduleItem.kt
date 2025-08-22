@@ -115,7 +115,6 @@ fun ScheduleItem(
                             schedule.value.firstOrNull()?.trainId?.let {
                                 DestinationItem(
                                     colorStr = destination.key.split("-")[1],
-                                    stationName = schedule.key,
                                     trainId = it,
                                     schedules = schedule.value,
                                     stationFlow = getStationById(schedule.key)

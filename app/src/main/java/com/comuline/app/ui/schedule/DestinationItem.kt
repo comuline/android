@@ -49,6 +49,7 @@ import com.comuline.app.ui.theme.Shapes
 import com.comuline.app.ui.theme.Typography
 import com.comuline.app.util.formatToHourMinute
 import com.comuline.app.util.getRelativeTimeString
+import com.comuline.app.util.toStationNameCase
 import kotlinx.coroutines.flow.Flow
 
 val PADDING_LEFT = 8.dp
@@ -63,7 +64,6 @@ val MAX_VISIBLE_SCHEDULES = 4
 @Preview
 @Composable
 fun DestinationItem(
-    stationName: String = "Bekasi",
     trainId: String = "1314B",
     colorStr: String = "#0084D8",
     schedules: List<Schedule>,
@@ -110,7 +110,7 @@ fun DestinationItem(
                             )
                             Row {
                                 Text(
-                                    text = station!!.name,
+                                    text = station!!.name.toStationNameCase(),
                                     color = MaterialTheme.colorScheme.onBackground,
                                     style = Typography.titleLarge,
                                 )
@@ -165,11 +165,10 @@ fun DestinationItem(
                                 verticalArrangement = Arrangement.Top,
                                 maxItemsInEachRow = ROWS,
                             ) {
-                                val maxVisibleSchedules = MAX_VISIBLE_SCHEDULES
-                                val visibleSchedules = schedules.drop(1).take(maxVisibleSchedules)
+                                val visibleSchedules = schedules.drop(1).take(MAX_VISIBLE_SCHEDULES)
 
                                 visibleSchedules.mapIndexed { index, schedule ->
-                                    if (index < maxVisibleSchedules) {
+                                    if (index < MAX_VISIBLE_SCHEDULES) {
                                         NextDepartureItem(
                                             timeStr = formatToHourMinute(schedule.departsAt),
                                             timeDiffStr = getRelativeTimeString(schedule.departsAt)

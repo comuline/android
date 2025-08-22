@@ -32,6 +32,8 @@ data class StationResponse(
 
 @JsonClass(generateAdapter = true)
 data class StationMetadata(
+    @Json(name = "active")
+    val active: Boolean? = null,
     @Json(name = "origin")
     val origin: Origin? = null
 )
@@ -51,6 +53,7 @@ fun StationResponse.toEntity() = StationEntity(
     name = name,
     type = type,
     metadata = StationMetadataEntity(
+        active = metadata.active,
         origin = metadata.origin?.let {
             OriginEntity(daop = it.daop, fgEnable = it.fgEnable)
         }
@@ -62,6 +65,7 @@ fun StationResponse.toEntity() = StationEntity(
 fun List<StationResponse>.toEntity() : List<StationEntity> {
     return map {
         StationEntity(it.uid, it.id, it.name, it.type, StationMetadataEntity(
+            active = it.metadata.active,
             origin = it.metadata.origin?.let {
                 OriginEntity(daop = it.daop, fgEnable = it.fgEnable)
             }
@@ -69,13 +73,13 @@ fun List<StationResponse>.toEntity() : List<StationEntity> {
     }
 }
 
-// TODO: remove no need
 fun StationEntity.toApiModel() = StationResponse(
     uid = uid,
     id = id,
     name = name,
     type = type,
     metadata = StationMetadata(
+        active = metadata.active,
         origin = metadata.origin?.let {
             Origin(daop = it.daop, fgEnable = it.fgEnable)
         }

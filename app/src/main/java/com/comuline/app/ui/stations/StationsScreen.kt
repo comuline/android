@@ -30,7 +30,7 @@ fun StationsScreen(
     val viewModel = hiltViewModel<StationsViewModel>()
     val uiState = viewModel.uiState
     
-    fun onStationClick_(station: Station) {
+    fun handleStationClick(station: Station) {
         coroutineScope.launch {
             viewModel.saveStation(station)
         }
@@ -62,12 +62,16 @@ fun StationsScreen(
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
             ) {
-                items(uiState.list) { item ->
-                    StationItem(item = item,
-                        isSaved = {uiState.savedStation.any{ v -> v.id == item.id }},
-                        onStationClick = {
-                        station: Station ->
-                        onStationClick_(station) } ,
+                items(
+                    items = uiState.list,
+                    key = { it.id }
+                ) { item ->
+                    StationItem(
+                        item = item,
+                        isSaved = { uiState.savedStation.any { v -> v.id == item.id } },
+                        onStationClick = { station: Station ->
+                            handleStationClick(station)
+                        }
                     )
                 }
             }

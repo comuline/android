@@ -1,5 +1,8 @@
 package com.comuline.app.domain
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 data class Schedule(
     val id: String,
     val stationId: String,

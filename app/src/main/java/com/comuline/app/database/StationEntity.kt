@@ -29,6 +29,8 @@ data class StationEntity constructor(
 )
 
 data class StationMetadataEntity(
+    @ColumnInfo(name = "active")
+    val active: Boolean? = null,
     @Embedded(prefix = "origin_")
     val origin: OriginEntity? = null
 )
@@ -47,6 +49,7 @@ fun StationEntity.asDomainModel(): Station {
         id = id,
         name = name,
         type = type,
+        active = metadata.active,
         daop = metadata.origin?.daop,
         fgEnable = metadata.origin?.fgEnable,
         createdAt = createdAt,
@@ -61,6 +64,7 @@ fun List<StationEntity>.asDomainModel(): List<Station> {
             id = it.id,
             name = it.name,
             type = it.type,
+            active = it.metadata.active,
             daop = it.metadata.origin?.daop,
             fgEnable = it.metadata.origin?.fgEnable,
             createdAt = it.createdAt,

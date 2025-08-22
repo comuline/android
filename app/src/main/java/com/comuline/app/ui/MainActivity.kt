@@ -10,7 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import com.comuline.app.controller.SnackbarController
 import com.comuline.app.observer.ObserveAsEvents
-import com.comuline.app.ui.theme.JetpackComposeBoilerplateTheme
+import com.comuline.app.ui.theme.ComulineTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
         setContent {
-            JetpackComposeBoilerplateTheme {
+            ComulineTheme {
                 val snackbarHostState = remember {
                     SnackbarHostState()
                 }

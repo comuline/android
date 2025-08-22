@@ -8,7 +8,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -19,7 +18,6 @@ import com.comuline.app.ui.schedule.SchedulesScreen
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ComposeApp(snackbarHostState: SnackbarHostState) {
-    val scope = rememberCoroutineScope()
     val navController = rememberNavController()
 
     Scaffold(
@@ -33,32 +31,25 @@ fun ComposeApp(snackbarHostState: SnackbarHostState) {
         NavHost(
             modifier = Modifier.padding(innerPadding),
             navController = navController,
-            startDestination = Route.SCHEDULES,
+            startDestination = "schedules",
         ) {
-            composable(Route.STATIONS) { backStackEntry ->
-                StationsScreen (
+            composable("stations") {
+                StationsScreen(
                     onStationClick = { station ->
+                        navController.popBackStack()
                     },
                     onBackButtonTap = {
                         navController.popBackStack()
                     }
                 )
             }
-            composable(Route.SCHEDULES) {
+            composable("schedules") {
                 SchedulesScreen(
                     onAddButtonClick = {
-                        navController.navigate(Route.STATIONS)
+                        navController.navigate("stations")
                     }
-            ) }
+                )
+            }
         }
     }
 }
-
-object Route {
-    const val STATIONS = "stations"
-    const val SCHEDULES = "schedules"
-}
-
-//object Argument {
-//    const val USERNAME = "username"
-//}

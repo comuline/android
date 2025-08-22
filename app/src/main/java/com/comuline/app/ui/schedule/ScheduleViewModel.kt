@@ -13,6 +13,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -23,8 +27,11 @@ class ScheduleViewModel @Inject constructor(
     private val stationsRepository: StationRepository,
 ) : ViewModel() {
 
-    var uiState by mutableStateOf(ScheduleUiState())
+    var uiState by mutableStateOf(LegacyScheduleUiState())
         private set
+    
+    private val _stateFlow = MutableStateFlow(LegacyScheduleUiState())
+    val stateFlow: StateFlow<LegacyScheduleUiState> = _stateFlow.asStateFlow()
 
     private var pollingJob: Job? = null
 

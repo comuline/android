@@ -23,7 +23,7 @@ class StationsViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var searchJob: Job? = null
-    var uiState by mutableStateOf(StationsUiState())
+    var uiState by mutableStateOf(LegacyStationsUiState())
         private set
 
     init {

@@ -10,17 +10,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.comuline.app.constants.getLocationNameById
 import com.comuline.app.domain.groupSchedules
-//import com.comuline.app.domain.groupSchedules
 import com.comuline.app.ui.components.Header
 import com.comuline.app.ui.components.NoStations
+import com.comuline.app.util.toStationNameCase
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview
@@ -68,19 +71,25 @@ fun SchedulesScreen(onAddButtonClick: () -> Unit = {}) {
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
             ) {
-                items(uiState.savedStation) { item ->
+                items(
+                    items = uiState.savedStation,
+                    key = { it.id }
+                ) { item ->
                     val filteredSchedule = uiState.schedules.filter { it.stationId == item.id }
                     val groupedSchedule = groupSchedules(filteredSchedule)
-                    getLocationNameById(item.id)?.let {
-                        ScheduleItem(
-                            stationName = it,
-                            isLoading = filteredSchedule.isEmpty(),
-                            groupedSchedule = groupedSchedule,
-                            getStationById =  {
-                                id -> viewModel.getStationById(id)
-                            }
-                        )
-                    }
+                    
+                    // Get station name from the station repository
+                    val station by viewModel.getStationById(item.id).collectAsState(initial = null)
+                    val stationName = station?.name?.toStationNameCase() ?: item.id
+                    
+                    ScheduleItem(
+                        stationName = stationName,
+                        isLoading = filteredSchedule.isEmpty(),
+                        groupedSchedule = groupedSchedule,
+                        getStationById = { id -> 
+                            viewModel.getStationById(id)
+                        }
+                    )
                 }
             }
         }

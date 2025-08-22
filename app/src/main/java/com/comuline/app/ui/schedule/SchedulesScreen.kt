@@ -24,11 +24,15 @@ import com.comuline.app.domain.groupSchedules
 import com.comuline.app.ui.components.Header
 import com.comuline.app.ui.components.NoStations
 import com.comuline.app.util.toStationNameCase
+import com.comuline.app.viewmodel.ThemeViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
-fun SchedulesScreen(onAddButtonClick: () -> Unit = {}) {
+fun SchedulesScreen(
+    onAddButtonClick: () -> Unit = {},
+    themeViewModel: ThemeViewModel? = null
+) {
     val viewModel = hiltViewModel<ScheduleViewModel>()
     val uiState = viewModel.uiState
 
@@ -59,8 +63,13 @@ fun SchedulesScreen(onAddButtonClick: () -> Unit = {}) {
     Column {
         Header(
             showSearchIcon = false,
+            showThemeToggle = themeViewModel != null,
+            currentTheme = themeViewModel?.themeMode?.collectAsState()?.value ?: com.comuline.app.preferences.ThemeMode.LIGHT,
             onAddButtonTap = {
                 onAddButtonClick()
+            },
+            onThemeToggleTap = {
+                themeViewModel?.toggleTheme()
             }
         )
         if (uiState.savedStation.isEmpty()) {

@@ -106,6 +106,9 @@ dependencies {
     //==================== Memory Leak Detection ====================
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
 
+    //==================== DataStore ====================
+    implementation "androidx.datastore:datastore-preferences:1.1.1"
+    
     //==================== UI ===============================
     implementation "com.composables:icons-lucide:1.0.0"
 }

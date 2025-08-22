@@ -15,6 +15,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -89,9 +90,10 @@ fun ScheduleItem(
                         trackColor = MaterialTheme.colorScheme.surfaceVariant,
                     )
                 } else {
-                    Image(
-                        Lucide.ChevronRight,
+                    Icon(
+                        imageVector = Lucide.ChevronRight,
                         contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.rotate(degrees).alpha(0.5f).size(20.dp),
                     )
                 }

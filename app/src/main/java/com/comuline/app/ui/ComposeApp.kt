@@ -14,10 +14,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.comuline.app.ui.stations.StationsScreen
 import com.comuline.app.ui.schedule.SchedulesScreen
+import com.comuline.app.viewmodel.ThemeViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ComposeApp(snackbarHostState: SnackbarHostState) {
+fun ComposeApp(
+    snackbarHostState: SnackbarHostState,
+    themeViewModel: ThemeViewModel
+) {
     val navController = rememberNavController()
 
     Scaffold(
@@ -47,7 +51,8 @@ fun ComposeApp(snackbarHostState: SnackbarHostState) {
                 SchedulesScreen(
                     onAddButtonClick = {
                         navController.navigate("stations")
-                    }
+                    },
+                    themeViewModel = themeViewModel
                 )
             }
         }

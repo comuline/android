@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.comuline.app.R
+import com.comuline.app.preferences.ThemeMode
 import com.comuline.app.ui.theme.Typography
 
 val ICON_SIZE = 56.dp
@@ -44,12 +45,15 @@ fun Header(
     showAddIcon: Boolean = true,
     showSearchIcon: Boolean = true,
     showBackButton: Boolean = false,
+    showThemeToggle: Boolean = false,
+    currentTheme: ThemeMode = ThemeMode.LIGHT,
     searchDisplay: String = "",
     onSearchDisplayChanged: (String) -> Unit = { },
     onSearchDisplayClosed: () -> Unit = { },
     onExpandedChanged: (Boolean) -> Unit = { },
     onAddButtonTap: () -> Unit = { },
     onBackButtonTap: () -> Unit = { },
+    onThemeToggleTap: () -> Unit = { },
 ) {
     var expanded by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
@@ -95,6 +99,23 @@ fun Header(
                     AppLogo(modifier = Modifier.alpha(0.5f))
                 }
                 Spacer(modifier = Modifier.weight(1.0f))
+                if (showThemeToggle && !expanded) {
+                    val themeIcon = when (currentTheme) {
+                        ThemeMode.LIGHT -> R.drawable.baseline_light_mode_24
+                        ThemeMode.DARK -> R.drawable.baseline_dark_mode_24
+                    }
+                    Icon(
+                        modifier = Modifier
+                            .size(ICON_SIZE)
+                            .padding(vertical = 16.dp)
+                            .alpha(0.5f)
+                            .clickable { onThemeToggleTap() }
+                        ,
+                        painter = painterResource(themeIcon),
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        contentDescription = "Toggle theme",
+                    )
+                }
                 if(showSearchIcon){
                     Icon(
                         modifier = Modifier
